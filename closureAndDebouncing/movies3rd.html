@@ -1,0 +1,79 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>MovieS3</title>
+
+    <style>
+        #products{
+            display: grid;
+            grid-template-columns: repeat(4,25%);
+            margin: 5%;
+            grid-gap: 10px;
+        }
+        img{
+            width: 60%;
+            height: 150px;
+        }
+    </style>
+
+</head>
+<body>
+    <h1>Trending movies</h1>
+
+    <div id="products"></div>
+
+    <script>
+
+    //    Request and Response 
+    //    fetch
+    //    can we get ecommerce data from a server
+    //    we need  api which can provide the data for
+
+    fetch("https://api.themoviedb.org/3/discover/movie?sort_by=popularity.desc&api_key=3056130cf448808d874a0a601c4cdfe2")
+        .then(function(res){
+            return res.json()
+        })
+        .then(function(res){
+            showProducts(res.results)
+        });
+
+
+        let container = document.getElementById("products");
+
+        function showProducts(products) {
+
+            products.forEach( function(product){
+
+                let div = document.createElement("div");
+
+                let img = document.createElement("img");
+
+                img.src = `https://image.tmdb.org/t/p/w500${product.poster_path}` ;   //+product.poster_path
+
+                let name = document.createElement("p")
+
+                name.innerText = product.title;
+
+                let price = document.createElement("p");
+
+                price.innerText = product.vote_average
+
+                div.append(img,name,price);
+
+                container.append(div);
+
+            })
+        }
+
+        
+
+
+    </script>
+
+</body>
+</html>
+
+<!-- res.results -->
