@@ -1,0 +1,148 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>movies debouncing</title>
+  <style>
+    input {
+      width: 200px;
+    }
+
+    #movies {
+      height: 200px;
+      width: 206px;
+      border: 1px solid black;
+      overflow: scroll;
+      border-top: none;
+    }
+  </style>
+  </head>
+
+  <body>
+    <input oninput="debounce(main,1000)" type="text" id="movie" placeholder="Enter movie name" />
+
+    <div id="movies"></div>
+
+    <div id="movie"></div>
+
+    <div id="movieT"></div>
+
+    <script>
+
+        //search movies - done
+
+        var timerId;
+
+       let movies_div = document.getElementById("movies");
+
+       async function searchMovies(movie_name) {
+           try {
+               let res = await fetch(`http://www.omdbapi.com/?apikey=d806bd70&s=${movie_name}`);
+
+               let data = await res.json();
+
+               return data;
+
+            //    console.log("data:",data);
+
+           }  catch(e){
+               console.log("e:",e);
+           }
+       }
+
+       function appendMovies(movies){
+           if(movies === undefined ) {
+               return false;
+           }
+
+           movies_div.innerHTML = null;
+
+           movies.forEach(function(movie){
+               let p = document.createElement("p");
+    
+
+               p.innerText = movie.Title;
+
+               var container = document.getElementById("movie");
+
+               p.addEventListener('click',function() {
+                   alert(p.innerText);
+
+                   fetch(`http://www.omdbapi.com/?apikey=d806bd70&t=${p.innerText}`)
+                   
+
+                  //  fetch("https://fakestoreapi.com/products")
+        .then(function(res){
+            return res.json()
+        })
+        .then(function(res){
+            showMovies(res)
+            console.log(res);
+        });
+
+              function showMovies(movie){
+
+                let movieT = document.getElementById("movieT")
+
+                let div = document.createElement("div");
+
+                let img = document.createElement("img");
+
+                img.src =    movie.Poster;                 //`${movie.poster_path}` ;   //+product.poster_path        https://image.tmdb.org/t/p/w500
+
+                let name = document.createElement("p")
+
+                name.innerText = movie.Title;
+
+                let price = document.createElement("p");
+
+                price.innerText = movie.Rated;
+
+                movieT.append(img,name,price);
+
+                container.append(div);   
+              }             
+
+
+               });
+
+               movies_div.append(p);
+           })
+       }
+
+       async function main() {
+           let name = document.getElementById("movie").value;
+
+        //    get searchMovies
+
+        if(name.length < 3 ){
+            return false;
+        }
+
+           let res = await searchMovies(name);
+
+           let movies_data = res.Search;
+
+           appendMovies(movies_data);
+
+           console.log("res:",res);
+       }
+
+       function debounce(func,delay) {
+
+        if(timerId) {
+            clearTimeout(timerId);
+        }
+
+          timerId = setTimeout( function(){
+               func();
+           }, delay);
+
+       }
+
+    </script>
+
+  </body>
+  </html>
